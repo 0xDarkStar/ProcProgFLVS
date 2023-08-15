@@ -1,4 +1,5 @@
 # This is for me to use in other scripts. Too lazy to download numpy and learn it.
+import copy
 
 def evenOrOdd(number):
     if number%2 == 0:
@@ -14,17 +15,18 @@ def mean(dataset: list):
     return meanAns
 
 def median(dataset: list):
+    datasetMod = copy.copy(dataset)
     smallToBig = []
     smallest = 99999999999999999999999999
     indexOfSmallest = 0
-    for a in range(len(dataset)):
-        for i in dataset:
+    for a in range(len(datasetMod)):
+        for i in datasetMod:
             if i < smallest:
                 smallest = i
-                indexOfSmallest = dataset.index(i)
+                indexOfSmallest = datasetMod.index(i)
         smallToBig.append(smallest)
         smallest = 99999999999999999999999
-        del dataset[indexOfSmallest]
+        del datasetMod[indexOfSmallest]
     if evenOrOdd(len(smallToBig)) == True:
         smaller = smallToBig[int(len(smallToBig)/2)-1]
         bigger = smallToBig[int((len(smallToBig)/2))]
@@ -37,7 +39,22 @@ def median(dataset: list):
         return mid
 
 def mode(dataset: list):
+    datasetMod = copy.copy(dataset)
     instances = {
     }
-    for i in dataset:
-        print("AAAAAAAAAAAA")
+    while len(datasetMod) > 0:
+        matching = datasetMod[0]
+        matches = 0
+        for i in datasetMod:
+            if i == matching:
+                remove = datasetMod.index(i)
+                del datasetMod[remove]
+                matches += 1
+        instances[matching] = matches
+    mostInstances = 0
+    mostFrequent = "hi :)"
+    for value, instance in instances.items():
+        if instance > mostInstances:
+            mostInstances = instance
+            mostFrequent = value
+    return mostFrequent
