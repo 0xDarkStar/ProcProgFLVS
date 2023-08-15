@@ -40,4 +40,4 @@ def mode(dataset: list):
     instances = {
     }
     for i in dataset:
-        print("AAAAAAAAAAAA") # Test
+        print("AAAAAAAAAAAA")
