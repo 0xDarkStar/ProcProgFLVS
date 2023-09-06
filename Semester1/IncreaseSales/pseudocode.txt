@@ -1,0 +1,11 @@
+Put them in a menu with the title of the shop
+The menu contains several options: Products (to see what they can buy), Cart (See what is in their cart), and Exit (end the program)
+
+Products leads to a menu that leads to all their products.
+When a product is selected, they are give a description of the product and given two choices: add to cart or back
+
+Cart leads to a menu that shows all the products currently in your cart.
+If a product is chosen, it shows them the description of the product and two choices: remove from cart (removes from cart and puts you back to the cart menu) or back
+It shows the total cost of all the products as well.
+If they are below $200, it tempts them by telling them that they get a "free car" if they spend $200. The "free car" is a toy car.
+Once they want to buy everything in their cart, they select the "Buy" option at the bottom. It then tells them if the get a free car or not depending on the total cost.

@@ -1,0 +1,13 @@
+Pseudocode:
+
+The Scenario: Several. Tell them of different ways that they can help.
+
+START OF PROGRAM
+	Tell user how the world is bad.
+	Tell user that they might be able to try and make parts of it better.
+	Let user choose from a list of methods to try to make the world a better place.
+	Once a method is chosen, explain that method.
+	Ask if user wants to see the other methods.
+	If yes, go back to the list.
+	If no, bid them farewell.
+END OF PROGRAM
