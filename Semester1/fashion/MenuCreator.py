@@ -18,14 +18,30 @@ class Menu:
         while True == True:
             os.system("clear") # Clear the terminal
             if self.title != False: # If they have a title
-                print(f"\x1B[1;28m {self.title}\n\x1B[22m") # Print it in bold
+                print(f"\x1B[1;28m {self.title}\n\x1B[0m") # Print it in bold
             if self.description != False: # If they have a description
                 print(f"{self.description}\n") # Print the description
             count = 0
             for i in self.options: # Print out their options
                 if i == self.options[self.index]: # If this is the selected option...
                     if count == 0:
-                        print(f"\x1B[28m\x1B[?25l    \x1B[30;47m{i}\x1B[0;0m") # Swap the colors (highlight)
+                        if i[-1] == " ":
+                            oldCount = 0 + count
+                            count = 0
+                            while True:
+                                if i[-1] != " ":
+                                    break
+                                elif i[count] != " " and i[count + 1] == " ":
+                                    i = i[:count+1]
+                                    break
+                                elif i[count] != " " and i[count + 2] == " ":
+                                    i = i[:count+1]
+                                    break
+                                else:
+                                    count -= 1
+                            print(f"\x1B[28m\x1B[?25l    \x1B[30;47m{i}\x1B[0;0m") # Swap the colors (highlight)
+                        else:
+                            print(f"\x1B[28m\x1B[?25l    \x1B[30;47m{i}\x1B[0;0m") # Swap the colors (highlight)
                     else:
                         if i == "Back":
                             print(f"\x1B[28m\x1B[?25l    \x1B[30;47m{i}\x1B[0;0m") # Swap the colors (highlight)
@@ -48,7 +64,7 @@ class Menu:
                 else: # If it isn't...
                     print("\x1B[28m   ", i) # Print it normally
                 count += 1
-            print("\n\x1B[2m  Use the arrow keys and spacebar to navigate the menu\x1B[22m") # Tell them how to use the menu
+            print("\n\x1B[2m  Use the arrow keys and enter to navigate the menu\x1B[22m") # Tell them how to use the menu
             print("\x1B[8m", end="\r") # Hide their inputs
             arrow = keyboard.read_key() # Read their input
             match arrow: # Find out what the input is
@@ -62,12 +78,12 @@ class Menu:
                         self.index = 0 # Change their selected to the top
                     else: # Their selected option isn't the bottom
                         self.index += 1 # Move it down by one
-                case "space": # Their input was the spacebar
+                case "enter": # Their input was the enter key
                     choice = self.options[self.index] # They chose this one
-                    print("\x1B[?25h\x1B[28m") # Reset everything
                     sleep(.2)
+                    print("\x1B[?25h\x1B[0m") # Reset everything
                     return choice # Return their choice for processing
                 case "esc": # Their input was the escape button
-                    print("\x1B[?25h\x1B[28m") # Reset everything
+                    print("\x1B[?25h\x1B[0m") # Reset everything
                     break # Break the menu
             sleep(.1) # Give them time to let go of the key they pressed

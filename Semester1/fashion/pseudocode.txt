@@ -1,0 +1,14 @@
+Put them in a menu with the title of the shop
+The menu contains several options: Products (to see what they can buy), Cart (See what is in their cart), and Exit (end the program)
+
+Products leads to a menu that leads to all their products.
+When a product is selected, they are give a description of the product and given two choices: add to cart or back
+
+Cart leads to a menu that shows all the products currently in your cart.
+If a product is chosen, it shows them the description of the product and two choices: remove from cart (removes from cart and puts you back to the cart menu) or back
+It shows the total cost of all the products as well.
+Once they are done choosing all the products, they can choose "Checkout".
+
+Checkout brings them first to a menu that allows them to apply for "The Stylist Card", which will give them a 5% discount and allow them to spend $2000 with no interest with a year to pay it back.
+After either applying or skipping, they get recommended a product based on the tags of the other products they chose.
+After adding the product or skipping it, they finally reach the checkout screen, where they see their items, subtotal, tax, discount (if applicable), and total. Their two options are "Order Now" or "Return to Cart". If they choose "Order Now", tell them that it will be delivered and end the program.
