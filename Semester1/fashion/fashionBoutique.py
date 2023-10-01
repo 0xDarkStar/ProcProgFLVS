@@ -19,7 +19,7 @@ productTags = { # Tags to recommend products
     "Mirror-Pants": ["Legwear", "Pants"],
     "Denim-Pants": ["Legwear", "Pants"],
     "Hip-Hop-Cargo-Shorts": ["Legwear", "Shorts"],
-    "I-Fear-God-Shirts": ["Legwear", "Shorts"],
+    "I-Fear-God-Shorts": ["Legwear", "Shorts"],
     "Denim-Skirt": ["Legwear", "Skirt", "Denim"],
     "Tight-Denim-Skirt": ["Legwear", "Skirt", "Denim"],
     # Dressers
