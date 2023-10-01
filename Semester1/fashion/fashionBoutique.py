@@ -19,7 +19,7 @@ productTags = { # Tags to recommend products
     "Mirror-Pants": ["Legwear", "Pants"],
     "Denim-Pants": ["Legwear", "Pants"],
     "Hip-Hop-Cargo-Shorts": ["Legwear", "Shorts"],
-    "I-Fear-God-Shirts": ["Legwear", "Shorts"],
+    "I-Fear-God-Shorts": ["Legwear", "Shorts"],
     "Denim-Skirt": ["Legwear", "Skirt", "Denim"],
     "Tight-Denim-Skirt": ["Legwear", "Skirt", "Denim"],
     # Dressers
@@ -51,7 +51,7 @@ searchTags = {
     "Travel": ["Polish-Flag-Shirt", "Indonesian-Flag-Shirt", "Caveman-Leaf-By-Gooccii"],
     "Legwear": ["Mirror-Pants", "Denim-Pants", "Hip-Hop-Cargo-Shorts", "I-Fear-God-Shirts", "Denim-Skirt", "Tight-Denim-Skirt"],
     "Pants": ["Mirror-Pants", "Denim-Pants"],
-    "Shorts": ["Hip-Hop-Cargo-Shorts", "I-Fear-God-Shirts"],
+    "Shorts": ["Hip-Hop-Cargo-Shorts", "I-Fear-God-Shorts"],
     "Skirt": ["Denim-Skirt", "Tight-Denim-Skirt"],
     "Denim": ["Denim-Skirt", "Tight-Denim-Skirt"],
     "Dresser": ["Malm", "Bellmore", "Weslar", "Abdulbari", "Lakeleigh"],
@@ -72,7 +72,7 @@ prices = { # All the prices
     "Mirror-Pants": 102.14,
     "Denim-Pants": 36.99,
     "Hip-Hop-Cargo-Shorts": 26.79,
-    "I-Fear-God-Shirts": 20.00,
+    "I-Fear-God-Shorts": 20.00,
     "Denim-Skirt": 49.90,
     "Tight-Denim-Skirt": 59.33,
     # Dressers
@@ -242,7 +242,7 @@ def main(): # The entire store part
                         
                         case "Legwear": # They want to look at legwear (pants, shorts, skirts, whatever)
                             while True: # Loop for the menu
-                                shortsOptions = ["Mirror Pants", "Denim Pants", "Hip Hop Cargo Shorts", "I Fear God Shirts", "Denim Skirt", "Tight Denim Skirt", "Back"] # Their options
+                                shortsOptions = ["Mirror Pants", "Denim Pants", "Hip Hop Cargo Shorts", "I Fear God Shorts", "Denim Skirt", "Tight Denim Skirt", "Back"] # Their options
                                 shortsMenu = Menu(shortsOptions, "Legwear") # make the menu
                                 choice = shortsMenu.startMenu() # Start the menu
                                 if choice == "Back": # They are done looking at legwear
