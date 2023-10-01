@@ -49,7 +49,7 @@ productTags = { # Tags to recommend products
 searchTags = {
     "Shirt": ["Polish-Flag-Shirt", "Indonesian-Flag-Shirt"],
     "Travel": ["Polish-Flag-Shirt", "Indonesian-Flag-Shirt", "Caveman-Leaf-By-Gooccii"],
-    "Legwear": ["Mirror-Pants", "Denim-Pants", "Hip-Hop-Cargo-Shorts", "I-Fear-God-Shirts", "Denim-Skirt", "Tight-Denim-Skirt"],
+    "Legwear": ["Mirror-Pants", "Denim-Pants", "Hip-Hop-Cargo-Shorts", "I-Fear-God-Shorts", "Denim-Skirt", "Tight-Denim-Skirt"],
     "Pants": ["Mirror-Pants", "Denim-Pants"],
     "Shorts": ["Hip-Hop-Cargo-Shorts", "I-Fear-God-Shorts"],
     "Skirt": ["Denim-Skirt", "Tight-Denim-Skirt"],
