@@ -400,7 +400,7 @@ Apply today and let your style shine with 'The Stylist Card.'""") # The discount
                 exit() # End the program
 
 currentTime = time() # Get the current time
-if currentTime >= 1696636740: # If the time is past October 6th, 2023
+if currentTime >= 1696636740: # If the time is past October 7th, 2023
     print("\x1B[1mSorry, we're closed\x1B[0m") # Say that it's closed and end the program
 else: # If it is before the end date
     main() # Run the program
