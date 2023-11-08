@@ -1,7 +1,7 @@
 # By: 0xDarkStar
 # Completed: September 30th, 2023
 
-from MenuCreator import *
+from Semester1.fashion.MenuCreator import *
 from PIL import Image
 from time import time
 from random import choice
