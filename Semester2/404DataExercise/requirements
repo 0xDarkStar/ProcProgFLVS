@@ -1,0 +1,5 @@
+A:
+    Ask the user for a specific date or piece of data from a provided CSV file containing sunrise times (sun_data.csv)
+    Say whether or not the information is present in the list.
+B:
+    Use the provided CSV file (sun_data.csv) but use it for your own scenario.
