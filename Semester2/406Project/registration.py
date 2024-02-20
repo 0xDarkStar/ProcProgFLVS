@@ -15,15 +15,15 @@ import csv
 
 def main():
     try:
-        appMode()
+        app_mode()
     except: # Something happened, at least there's a backup mode!
         print("Error. Switching to terminal mode.")
-        termMode()
+        terminal_mode()
 
-def termMode():
+def terminal_mode():
     print("Hello world")
 
-def appMode():
+def app_mode():
     global controlFrame, outputFrame, mainWindow
     # Initialize the window
     mainWindow = Tk()
@@ -33,17 +33,18 @@ def appMode():
     mainFrame.pack()
     # Holds the controls (Buttons and text inputs)
     controlFrame = Frame(mainFrame)
-    controlFrame.pack(side=LEFT, padx=20)
-    popFrames.popControlFrame()
+    controlFrame.grid(row=0, column=0, padx=20)
+    pop_frames.pop_control_frame()
     # Holds the output (responses such as "Deleted user" and requested info)
     outputFrame = Frame(mainFrame)
-    outputFrame.pack(side=RIGHT, padx=20)
+    outputFrame.grid(row=0, column=1, padx=20)
+    pop_frames.pop_output_frame()
     # Binds ctrl+q to closing the window
     mainWindow.bind('<Control-q>', lambda e: kill(e))
     mainWindow.mainloop()
 
-class popFrames():
-    def popControlFrame():
+class pop_frames():
+    def pop_control_frame():
         # Populate the control frame with buttons and text inputs
         removeUser = Button(controlFrame, text="Remove User", padx=10, pady=10, command=commands.delUser)
         addUser = Button(controlFrame, text="Add User", padx=10, pady=10, command=commands.addUser)
@@ -55,10 +56,13 @@ class popFrames():
         outputList.grid(row=1, column=0)
         outputUser.grid(row=1, column=1)
 
-    def popOutputFrame():
+    def pop_output_frame():
         print("Populating output frame")
+        # Make the boxes
         userList = Listbox(outputFrame)
         userInfo = Listbox(outputFrame)
+        # Load one, we don't need two empty boxes.
+        userList.pack(padx=10)
     
 class commands():
     def delUser():
@@ -66,11 +70,11 @@ class commands():
     def addUser():
         print()
     def outList():
-        userInfoCommands.searchUserList()
+        user_info_commands.searchUserList()
     def outUser():
         print()
 
-class userInfoCommands():
+class user_info_commands():
     def searchUserList():
         with open("battle_royale.csv") as file:
             table = csv.reader(file, delimiter=',')
