@@ -11,6 +11,7 @@
 2. idk
 '''
 from tkinter import *
+from tkinter import ttk
 import csv
 
 def main():
@@ -27,6 +28,7 @@ def app_mode():
     global controlFrame, outputFrame, mainWindow
     # Initialize the window
     mainWindow = Tk()
+    mainWindow.title("Applicant Manipulation")
     mainWindow.geometry("700x600")
     # Holds control and output frames
     mainFrame = Frame(mainWindow)
@@ -59,8 +61,21 @@ class pop_frames():
     def pop_output_frame():
         print("Populating output frame")
         # Make the boxes
-        userList = Listbox(outputFrame)
-        userInfo = Listbox(outputFrame)
+        userList = ttk.Treeview(outputFrame)
+        userInfo = ttk.Treeview(outputFrame)
+        # Make the top columns for both
+        # Starting with the userList table
+        userList["columns"] = ("username", "realName", "playerID")
+        userList.column("#0", width=0, stretch=NO)
+        userList.column("username", anchor=CENTER, width=80)
+        userList.column("realName", anchor=CENTER, width=80)
+        userList.column("playerID", anchor=CENTER, width=80)
+        userList.heading("#0", text="", anchor=CENTER)
+        userList.heading("username", text="Username", anchor=CENTER)
+        userList.heading("realName", text="Real Name", anchor=CENTER)
+        userList.heading("playerID", text="Player ID", anchor=CENTER)
+        # Then the userInfo table
+        userInfo["columns"] = ("Username", "Real name", "Player ID")
         # Load one, we don't need two empty boxes.
         userList.pack(padx=10)
     
