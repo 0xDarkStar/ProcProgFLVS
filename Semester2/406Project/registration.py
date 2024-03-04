@@ -9,6 +9,7 @@
 2. idk
 '''
 from tkinter import *
+from tkinter import messagebox # Good for checking if user is sure about choice
 from tkinter import ttk
 import csv
 
@@ -45,7 +46,7 @@ def app_mode():
 
 class pop_frames():
     def pop_control_frame():
-        print("Populating control frame")
+        # print("Populating control frame")
         global userNameInput, realNameInput, searchInput
         # Populate the control frame with buttons and text inputs
         removeUser = Button(controlFrame, text="Remove User", padx=10, pady=10, command=commands.del_user)
@@ -66,7 +67,7 @@ class pop_frames():
         searchInput.insert(0, "Search")
 
     def pop_output_frame():
-        print("Populating output frame")
+        # print("Populating output frame")
         global userList
         # Make the boxes
         userList = ttk.Treeview(outputFrame)
@@ -90,6 +91,9 @@ class commands():
         item = userList.focus()
         if len(item) == 0: # Nothing was selected
             return
+        if not messagebox.askyesno(title="Deletion Check", message=f"Are you sure you want to delete the player with the User ID of {item}?"):
+            # They don't want to delete the selected user
+            return
         userList.delete(item)
         file_commands.delete_user(item)
     def add_user():
@@ -98,13 +102,26 @@ class commands():
         file_commands.add_user(userName, realName)
     def search_users():
         searchTerm = searchInput.get()
-        users = file_commands.read_file()
-        index = 0
-        foundUsers = []
-        for i in users:
-            if searchTerm in i:
-                foundUsers.append(index)
-            index += 1
+        if len(searchTerm) == 0:
+            file_commands.update_user_list()
+        else:
+            users = file_commands.read_file()
+            users.pop(0)
+            index = 0
+            foundUsers = []
+            for i in users:
+                if searchTerm in i:
+                    foundUsers.append(index)
+                index += 1
+            for i in userList.get_children(): # All This and down is like update_user_list, just using a different list
+                userList.delete(i)
+            for i in foundUsers:
+                valList = []
+                for ii in users[i]:
+                    valList.append(ii)
+                userList.insert(parent='', index='end', iid=index, values=(valList[0], valList[1], valList[2]))
+                index += 1
+            userList.update()
         
 
 class file_commands():
