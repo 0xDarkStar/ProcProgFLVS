@@ -133,8 +133,8 @@ class file_commands():
         rows.pop(iid)
         newRows = []
         for i in rows:
-            if i[2] == f'{iid+1}':
-                i[2] = f'{iid}'
+            if i[2] == str(iid+1):
+                i[2] = str(iid)
                 iid += 1
             newRows += i
         with open("battle_royale.csv", "w") as file:
