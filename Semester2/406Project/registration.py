@@ -6,7 +6,7 @@
 
 ''' What to use:
 1. tkinter (for the UI)
-2. idk
+2. csv (to read the csv file)
 '''
 from tkinter import *
 from tkinter import messagebox # Good for checking if user is sure about choice
