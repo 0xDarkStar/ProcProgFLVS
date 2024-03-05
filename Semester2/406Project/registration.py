@@ -21,7 +21,7 @@ def main():
         terminal_mode()
 
 def terminal_mode(): # Finish this last
-    print("Hello world")
+    print("Hello world") # This will stay unfinished until I come back to it (if I ever do)
 
 def app_mode():
     global controlFrame, outputFrame, mainWindow
@@ -55,7 +55,7 @@ class pop_frames():
         # print("Populating control frame")
         global userNameInput, realNameInput
         # Populate the control frame with buttons and text inputs
-        removeUser = Button(controlFrame, text="Remove User", padx=10, pady=10, command=commands.del_user)
+        removeUser = Button(controlFrame, text="Remove User", padx=10, pady=10, command=commands.delete_user)
         addUser = Button(controlFrame, text="Add User", padx=10, pady=10, command=commands.add_user)
         userNameInput = Entry(controlFrame, width=15)
         realNameInput = Entry(controlFrame, width=10)
@@ -104,7 +104,7 @@ class pop_frames():
         file_commands.update_user_list()
     
 class commands():
-    def del_user():
+    def delete_user():
         # Grab the selected item ID from the table
         userID = userList.focus()
         if len(userNameInput.get()) != 0:
@@ -199,7 +199,9 @@ class file_commands():
             newRows += i
         with open("battle_royale.csv", "w") as file:
             for i in rows:
-                file.write(f"{i}\n")
+                for ii in i:
+                    file.write(f"{ii},")
+                file.write("\n")
         file_commands.update_user_list()
     def add_user(userName, realName):
         """
@@ -212,7 +214,9 @@ class file_commands():
         rows.append([userName, realName, userID])
         with open("battle_royale.csv", "w") as file:
             for i in rows:
-                file.write(f"{i}\n")
+                for ii in i:
+                    file.write(f"{ii},")
+                file.write("\x1b[1D\n")
         file_commands.update_user_list()
     def read_file():
         """
