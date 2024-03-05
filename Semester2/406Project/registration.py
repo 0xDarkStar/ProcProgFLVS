@@ -28,33 +28,37 @@ def app_mode():
     # Initialize the window
     mainWindow = Tk()
     mainWindow.title("Applicant Manipulation")
-    mainWindow.geometry("700x250")
+    mainWindow.geometry("700x300")
     # Holds control and output frames
     mainFrame = Frame(mainWindow)
     mainFrame.pack()
     # Holds the controls (Buttons and text inputs)
     controlFrame = Frame(mainFrame)
-    controlFrame.grid(row=0, column=0, padx=20)
+    controlFrame.grid(row=0, column=0, padx=20, pady=5)
     pop_frames.pop_control_frame()
-    # Holds the output (responses such as "Deleted user" and requested info)
+    # Holds the output (like the list of users), also contains a search frame for viewing specific users
     outputFrame = Frame(mainFrame)
-    outputFrame.grid(row=0, column=1, padx=20)
+    outputFrame.grid(row=0, column=1, padx=20, pady=5)
     pop_frames.pop_output_frame()
     # Binds ctrl+q to closing the window
     mainWindow.bind('<Control-q>', lambda e: kill(e))
     mainWindow.mainloop()
 
+def kill(e = False):
+    mainWindow.destroy()
+
 class pop_frames():
     def pop_control_frame():
+        """
+        Populate the 'control' frame, which holds almost all of the controls
+        """
         # print("Populating control frame")
-        global userNameInput, realNameInput, searchInput
+        global userNameInput, realNameInput
         # Populate the control frame with buttons and text inputs
         removeUser = Button(controlFrame, text="Remove User", padx=10, pady=10, command=commands.del_user)
         addUser = Button(controlFrame, text="Add User", padx=10, pady=10, command=commands.add_user)
         userNameInput = Entry(controlFrame, width=15)
         realNameInput = Entry(controlFrame, width=10)
-        searchBut = Button(controlFrame, text="Search", padx=10, pady=10, command=commands.search_users)
-        searchInput = Entry(controlFrame, width=15)
         # Load them all
         removeUser.grid(row=0, column=0)
         addUser.grid(row=0, column=1)
@@ -62,14 +66,28 @@ class pop_frames():
         userNameInput.insert(0, 'Username')
         realNameInput.grid(row=1, column=1)
         realNameInput.insert(0, 'Real name')
-        searchBut.grid(row=2, column=1)
-        searchInput.grid(row=2, column=0)
-        searchInput.insert(0, "Search")
 
     def pop_output_frame():
+        """
+        Populate the 'output' frame, which holds the output (user list).
+        It also makes the search frame and its items meant for searching the user list.
+        """
         # print("Populating output frame")
-        global userList
-        # Make the boxes
+        global userList, searchInput
+        # Make the search bar frame
+        searchFrame = Frame(outputFrame)
+        searchFrame.pack(side=TOP)
+        # Make the search bar
+        searchBut = Button(searchFrame, text="Search", padx=10, pady=10, command=commands.search_users)
+        searchInput = Entry(searchFrame, width=15)
+        resetBut = Button(searchFrame, text="Reset", padx=10, pady=10, command=file_commands.update_user_list)
+        # Pack the search bar
+        searchInput.pack(side=LEFT)
+        searchInput.insert(0, "Search")
+        searchInput.bind('<Return>', commands.search_users)
+        searchBut.pack(padx=5, side=LEFT)
+        resetBut.pack(side=LEFT)
+        # Make the table that holds all of the user info
         userList = ttk.Treeview(outputFrame)
         # Make the top columns for userList
         userList["columns"] = ("username", "realName", "userID")
@@ -82,26 +100,50 @@ class pop_frames():
         userList.heading("realName", text="Real Name", anchor=CENTER)
         userList.heading("userID", text="User ID", anchor=CENTER)
         # Load userList
-        userList.pack(padx=10, pady=10)
+        userList.pack(padx=10, pady=10, side=BOTTOM)
         file_commands.update_user_list()
     
 class commands():
     def del_user():
         # Grab the selected item ID from the table
-        item = userList.focus()
-        if len(item) == 0: # Nothing was selected
+        userID = userList.focus()
+        if len(userNameInput.get()) != 0:
+            username = userNameInput.get().lower()
+            users = file_commands.read_file()
+            users.pop(0)
+            index = 0
+            for i in users:
+                if username == i[0].lower():
+                    userID = i[2]
+                    break
+                index += 1
+        elif len(realNameInput.get()) != 0:
+            realname = realNameInput.get().lower()
+            users = file_commands.read_file()
+            users.pop(0)
+            index = 0
+            for i in users:
+                if realname == i[1].lower():
+                    userID = i[2]
+                    break
+                index += 1
+        try:
+            user = userList.item(int(userID))
+        except ValueError:
+            print("User not found. Are the text inputs empty?")
             return
-        if not messagebox.askyesno(title="Deletion Check", message=f"Are you sure you want to delete the player with the User ID of {item}?"):
+        username = user["values"][0]
+        if not messagebox.askyesno(title="Deletion Check", message=f"Are you sure you want to delete user \n{username} (ID: {userID})?"):
             # They don't want to delete the selected user
             return
-        userList.delete(item)
-        file_commands.delete_user(item)
+        userList.delete(userID)
+        file_commands.delete_user(userID)
     def add_user():
         userName = userNameInput.get()
         realName = realNameInput.get()
         file_commands.add_user(userName, realName)
-    def search_users():
-        searchTerm = searchInput.get()
+    def search_users(e = False):
+        searchTerm = searchInput.get().lower()
         if len(searchTerm) == 0:
             file_commands.update_user_list()
         else:
@@ -110,8 +152,9 @@ class commands():
             index = 0
             foundUsers = []
             for i in users:
-                if searchTerm in i:
-                    foundUsers.append(index)
+                for ii in i:
+                    if searchTerm == ii.lower():
+                        foundUsers.append(index)
                 index += 1
             for i in userList.get_children(): # All This and down is like update_user_list, just using a different list
                 userList.delete(i)
@@ -190,7 +233,5 @@ class file_commands():
                 rows += [row]
         return rows
 
-def kill(e):
-    mainWindow.destroy()
 
 main()
