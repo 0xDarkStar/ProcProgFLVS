@@ -224,10 +224,6 @@ class file_commands():
             for row in table:
                 index = 0
                 for i in row:
-                    if index == 2: # Is at the end of the list
-                        i = i[2:-2] # To remove the ']
-                    else:
-                        i = i[2:-1] # To remove the '
                     row[index] = i
                     index += 1
                 rows += [row]

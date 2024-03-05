@@ -208,10 +208,6 @@ def lookInFile(month=None, day=None, time=None):
         for row in table:
             index = 0
             for i in row:
-                if index == 5: # Is at the end of the list
-                    i = i[2:-2] # To remove the ']
-                else:
-                    i = i[2:-1] # To remove the '
                 row[index] = i.lower() # Make it lowercase to have it work with the code
                 index += 1
             rows += [row]
