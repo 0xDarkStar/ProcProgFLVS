@@ -32,13 +32,15 @@ def questionnaire():
     questionKeys = list(questions.keys())
     currentQuestion = questionKeys[page]
     questionFrame = Frame(master=mainFrame)
+    pageIndicator = Label(master=questionFrame, text=f"{page+1}/{len(questionKeys)}")
     questionText = Label(master=questionFrame, text=currentQuestion)
     answerFrame = Frame(master=questionFrame)
-    answerButton0 = Button(master=answerFrame, text=questions[currentQuestion][0], command=lambda: answer_clicked(0, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3))
-    answerButton1 = Button(master=answerFrame, text=questions[currentQuestion][1], command=lambda: answer_clicked(1, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3))
-    answerButton2 = Button(master=answerFrame, text=questions[currentQuestion][2], command=lambda: answer_clicked(2, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3))
-    answerButton3 = Button(master=answerFrame, text=questions[currentQuestion][3], command=lambda: answer_clicked(3, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3))
+    answerButton0 = Button(master=answerFrame, text=questions[currentQuestion][0], command=lambda: answer_clicked(0, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator))
+    answerButton1 = Button(master=answerFrame, text=questions[currentQuestion][1], command=lambda: answer_clicked(1, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator))
+    answerButton2 = Button(master=answerFrame, text=questions[currentQuestion][2], command=lambda: answer_clicked(2, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator))
+    answerButton3 = Button(master=answerFrame, text=questions[currentQuestion][3], command=lambda: answer_clicked(3, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator))
     backButton = Button(master=questionFrame, text="Go Back", command=lambda: switch_to("back", "questionnaire"))
+    pageIndicator.pack()
     questionText.pack()
     answerButton0.pack(side=LEFT)
     answerButton1.pack(side=LEFT)
@@ -47,7 +49,7 @@ def questionnaire():
     answerFrame.pack()
     backButton.pack()
 
-def answer_clicked(answer, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3): # Tons of variables. I just didn't want to make them all global...
+def answer_clicked(answer, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator): # Tons of variables. I just didn't want to make them all global...
     global page
     if page == 0:
         answers.append([])
@@ -58,12 +60,13 @@ def answer_clicked(answer, questions, questionKeys, questionText, answerButton0,
     if page == len(questionKeys):
         page = 0
         switch_to("back", "questionnaire")
-        change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3)
+        change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator)
     else:
-        change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3)
+        change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator)
 
-def change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3):
+def change_question(page, questions, questionKeys, questionText, answerButton0, answerButton1, answerButton2, answerButton3, pageIndicator):
     currentQuestion = questionKeys[page]
+    pageIndicator.configure(text=f"{page+1}/{len(questionKeys)}")
     questionText.configure(text=currentQuestion)
     answerButton0.configure(text=questions[currentQuestion][0])
     answerButton1.configure(text=questions[currentQuestion][1])
