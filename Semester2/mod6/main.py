@@ -42,19 +42,22 @@ def questionnaire():
     Make the questionnaire, but don't pack the frame.
     """
     global questionFrame, answers, page
-    questions = ["Question 0", "Question 1", "Question 2"]
+    questions = {"I work with others on projects": "Teamwork",
+                 "I like working outdoors": "Work Outdoors",
+                 "I like working indoors": "Work Indoors"}
     answers = [] # Holds all the answers that the user chose
     page = 0
-    currentQuestion = questions[page]
+    questionKeys = list(questions.keys())
+    currentQuestion = questionKeys[page]
     questionFrame = Frame(master=mainFrame)
-    pageIndicator = Label(master=questionFrame, text=f"{page+1}/{len(questions)}")
+    pageIndicator = Label(master=questionFrame, text=f"{page+1}/{len(questionKeys)}")
     questionText = Label(master=questionFrame, text=currentQuestion)
     answerFrame = Frame(master=questionFrame)
-    answerButton0 = Button(master=answerFrame, text="Never", command=lambda: answer_clicked(1, questions, questionText, pageIndicator))
-    answerButton1 = Button(master=answerFrame, text="Rarely", command=lambda: answer_clicked(2, questions, questionText, pageIndicator))
-    answerButton2 = Button(master=answerFrame, text="Occasionally", command=lambda: answer_clicked(3, questions, questionText, pageIndicator))
-    answerButton3 = Button(master=answerFrame, text="Frequently", command=lambda: answer_clicked(4, questions, questionText, pageIndicator))
-    answerButton4 = Button(master=answerFrame, text="Very Frequently", command=lambda: answer_clicked(5, questions, questionText, pageIndicator))
+    answerButton0 = Button(master=answerFrame, text="Never", command=lambda: answer_clicked(1, questionKeys, questionText, pageIndicator))
+    answerButton1 = Button(master=answerFrame, text="Rarely", command=lambda: answer_clicked(2, questionKeys, questionText, pageIndicator))
+    answerButton2 = Button(master=answerFrame, text="Occasionally", command=lambda: answer_clicked(3, questionKeys, questionText, pageIndicator))
+    answerButton3 = Button(master=answerFrame, text="Often", command=lambda: answer_clicked(4, questionKeys, questionText, pageIndicator))
+    answerButton4 = Button(master=answerFrame, text="Very Often", command=lambda: answer_clicked(5, questionKeys, questionText, pageIndicator))
     backButton = Button(master=questionFrame, text="Go Back", command=lambda: switch_to("back", "questionnaire"))
     pageIndicator.pack()
     questionText.pack()
@@ -66,7 +69,7 @@ def questionnaire():
     answerFrame.pack()
     backButton.pack()
 
-def answer_clicked(answer, questions, questionText, pageIndicator): # Tons of variables. I just didn't want to make them all global...
+def answer_clicked(answer, questionKeys, questionText, pageIndicator): # Tons of variables. I just didn't want to make them all global...
     """
     Handle changing the page and adding the chosen answer to the list
     """
@@ -77,19 +80,19 @@ def answer_clicked(answer, questions, questionText, pageIndicator): # Tons of va
     answers[currentRun].append(answer)
     page += 1
     # print(f"Questions: {len(questions)}, Selected Answer: {answer}, Current Page: {page}, Current Run: {currentRun}")
-    if page == len(questions):
+    if page == len(questionKeys):
         page = 0
         switch_to("back", "questionnaire")
-        change_question(page, questions, questionText, pageIndicator)
+        change_question(page, questionKeys, questionText, pageIndicator)
     else:
-        change_question(page, questions, questionText, pageIndicator)
+        change_question(page, questionKeys, questionText, pageIndicator)
 
-def change_question(page, questions, questionText, pageIndicator):
+def change_question(page, questionKeys, questionText, pageIndicator):
     """
     Handle updating the question, page indicator, and all the answers
     """
-    currentQuestion = questions[page]
-    pageIndicator.configure(text=f"{page+1}/{len(questions)}")
+    currentQuestion = questionKeys[page]
+    pageIndicator.configure(text=f"{page+1}/{len(questionKeys)}")
     questionText.configure(text=currentQuestion)
 
 def research():
@@ -113,11 +116,6 @@ def switch_to(string, location=False):
     match string:
         case "questionnaire":
             mainMenuFrame.forget()
-            try:
-                if len(answers[len(answers)-1]) == 1:
-                    page = 0
-            except IndexError:
-                pass
             questionFrame.pack()
         case "research":
             mainMenuFrame.forget()
