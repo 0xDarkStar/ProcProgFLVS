@@ -69,7 +69,7 @@ def questionnaire():
     answerFrame.pack()
     backButton.pack()
 
-def answer_clicked(answer, questionKeys, questionText, pageIndicator): # Tons of variables. I just didn't want to make them all global...
+def answer_clicked(answer, questionKeys, questionText, pageIndicator):
     """
     Handle changing the page and adding the chosen answer to the list
     """
@@ -79,7 +79,7 @@ def answer_clicked(answer, questionKeys, questionText, pageIndicator): # Tons of
     currentRun = len(answers)-1
     answers[currentRun].append(answer)
     page += 1
-    # print(f"Questions: {len(questions)}, Selected Answer: {answer}, Current Page: {page}, Current Run: {currentRun}")
+    # print(f"Questions: {len(questionsKeys)}, Selected Answer: {answer}, Current Page: {page}, Current Run: {currentRun}")
     if page == len(questionKeys):
         page = 0
         switch_to("back", "questionnaire")
@@ -136,5 +136,28 @@ def switch_to(string, location=False):
                     removed += 1
                 index += 1
             mainMenuFrame.pack()
+
+def recommend_courses():
+    """
+    The majors in the dictionary will work like this:
+    majors = {"Template": ["Description", ["List", "Of", "Career", "Paths"], ["Working with others", "Working Outdoors", "Working Indoors", etc.]],
+            "Example": ["Often does X, Y, and Z. Has to ... often.", ["Job1", "Job2", "Job3", "Job4"], [5, 3, 3, ...]]}
+    """
+    majors = {"Geology": ["Description", ["Geologist"], []],
+              "Biology": ["Description", ["Biologist"], []],
+              "Psychology": ["Description", ["Psychologist"], []],
+              "Computer Science": ["Description", [""], []],
+              "Computer Programming": ["Description", ["Back-end Developer", "Front-end Developer"], []],
+              "Engineering": ["Description", ["Automotive Engineer"], []],
+              "Education": ["Description", ["Teacher"], []],
+              "Buisness": ["Description", ["Manager"], []],
+              "Finance": ["Description", ["Accountant"], []],
+              "Medical": ["Description", ["Doctor", "Nurse"], []],
+              "History": ["Description", ["Historian"], []],
+              "Law": ["Description", ["Lawyer"], []]}
+    """
+    The algorithm for recommending courses (as far as I've planned), will recommend based on the difference between set points and chosen answers.
+    It could recommend the top three courses or only the course(s) that match the most.
+    """
 
 main()
