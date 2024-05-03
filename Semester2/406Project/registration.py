@@ -200,8 +200,10 @@ class file_commands():
         with open("battle_royale.csv", "w") as file:
             for i in rows:
                 for ii in i:
-                    file.write(f"{ii},")
-                file.write("\n")
+                    if ii == i[2]:
+                        file.write(f"{ii}\n")
+                    else:
+                        file.write(f"{ii},")
         file_commands.update_user_list()
     def add_user(userName, realName):
         """
@@ -215,8 +217,10 @@ class file_commands():
         with open("battle_royale.csv", "w") as file:
             for i in rows:
                 for ii in i:
-                    file.write(f"{ii},")
-                file.write("\x1b[1D\n")
+                    if ii == i[2]:
+                        file.write(f"{ii}\n")
+                    else:
+                        file.write(f"{ii},")
         file_commands.update_user_list()
     def read_file():
         """
