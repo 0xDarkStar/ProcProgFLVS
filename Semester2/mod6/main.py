@@ -41,7 +41,7 @@ def questionnaire():
     """
     Make the questionnaire, but don't pack the frame.
     """
-    global questionFrame, answers, page
+    global questionFrame, answers, page, questions
     questions = {"I work with others on projects": "Teamwork",
                  "I like working outdoors": "Work Outdoors",
                  "I like working indoors": "Work Indoors"}
@@ -157,6 +157,10 @@ def recommend_courses():
               "Law": ["Description", ["Lawyer"], []]}
     """
     The algorithm for recommending courses (as far as I've planned), will recommend based on the difference between set points and chosen answers.
+
+    That can be done by checking an answer, using the index of the answer to find out what skill it is related to, then going through all the majors' to subtract against that one skill, adding each result to a list.
+    Said list will have an integer in it for each major. That integer is what is added to by each result (according to the major). Before adding a result though, make sure that the result is positive (make it absolute).
+
     It could recommend the top three courses or only the course(s) that match the most.
     """
 
