@@ -108,6 +108,7 @@ def courses():
     """
     global coursesFrame
     coursesFrame = Frame(master=mainFrame)
+    mainText = Label(master=coursesFrame, text="You have not completed the questionnaire yet.")
 
 def switch_to(string, location=False):
     """
@@ -143,18 +144,42 @@ def recommend_courses():
     majors = {"Template": ["Description", ["List", "Of", "Career", "Paths"], ["Working with others", "Working Outdoors", "Working Indoors", etc.]],
             "Example": ["Often does X, Y, and Z. Has to ... often.", ["Job1", "Job2", "Job3", "Job4"], [5, 3, 3, ...]]}
     """
-    majors = {"Geology": ["Description", ["Geologist"], []],
-              "Biology": ["Description", ["Biologist"], []],
-              "Psychology": ["Description", ["Psychologist"], []],
-              "Computer Science": ["Description", [""], []],
-              "Computer Programming": ["Description", ["Back-end Developer", "Front-end Developer"], []],
-              "Engineering": ["Description", ["Automotive Engineer"], []],
-              "Education": ["Description", ["Teacher"], []],
-              "Buisness": ["Description", ["Manager"], []],
-              "Finance": ["Description", ["Accountant"], []],
-              "Medical": ["Description", ["Doctor", "Nurse"], []],
-              "History": ["Description", ["Historian"], []],
-              "Law": ["Description", ["Lawyer"], []]}
+    majors = {"Geology": ["Description",
+                          ["Geologist"],
+                          []],
+              "Biology": ["Description",
+                          ["Biologist"],
+                          []],
+              "Psychology": ["Description",
+                             ["Psychologist"],
+                             []],
+              "Computer Science": ["Description",
+                                   [""],
+                                   []],
+              "Computer Programming": ["Description",
+                                       ["Back-end Developer", "Front-end Developer"],
+                                       []],
+              "Engineering": ["Description",
+                              ["Automotive Engineer"],
+                              []],
+              "Education": ["Description",
+                            ["Teacher"],
+                            []],
+              "Buisness": ["Description",
+                           ["Manager"],
+                           []],
+              "Finance": ["Description",
+                          ["Accountant"],
+                          []],
+              "Medical": ["Description",
+                          ["Doctor", "Nurse"],
+                          []],
+              "History": ["Description",
+                          ["Historian"],
+                          []],
+              "Law": ["Description",
+                      ["Lawyer"],
+                      []]}
     """
     The algorithm for recommending courses (as far as I've planned), will recommend based on the difference between set points and chosen answers.
 
