@@ -106,9 +106,12 @@ def courses():
     """
     Make the courses page to show which courses are recommended based on the questionnaire.
     """
-    global coursesFrame
+    global coursesFrame, mainText
     coursesFrame = Frame(master=mainFrame)
     mainText = Label(master=coursesFrame, text="You have not completed the questionnaire yet.")
+    backButton = Button(master=coursesFrame, text="Go Back", command=lambda: switch_to("back", "courses"))
+    mainText.pack()
+    backButton.pack()
 
 def switch_to(string, location=False):
     """
@@ -123,6 +126,8 @@ def switch_to(string, location=False):
             researchFrame.pack()
         case "courses":
             mainMenuFrame.forget()
+            if len(answers) != 0 and len(answers[0]) == len(questions):
+                mainText.configure(text="All attempts of the questionnaire:")
             coursesFrame.pack()
         case "back":
             frames = {"questionnaire": questionFrame,
