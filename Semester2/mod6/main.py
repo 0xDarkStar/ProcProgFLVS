@@ -177,7 +177,7 @@ def recommend_courses():
                           ["Accountant"],
                           []],
               "Medical": ["Description",
-                          ["Doctor", "Nurse"],
+                          ["Doctor", "Nurse", "Surgeon"],
                           []],
               "History": ["Description",
                           ["Historian"],
