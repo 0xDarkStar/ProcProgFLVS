@@ -1,4 +1,6 @@
 from tkinter import *
+from datetime import datetime
+import time
 
 """Remaining parts to be compelted:
 [ ] Algorithm for recommending courses
@@ -39,7 +41,7 @@ def main_menu():
 
 def questionnaire():
     """
-    Make the questionnaire, but don't pack the frame.
+    Make the questionnaire, but don't pack the frame
     """
     global questionFrame, answers, page, questions
     questions = {"I work with others on projects": "Teamwork",
@@ -79,11 +81,13 @@ def answer_clicked(answer, questionKeys, questionText, pageIndicator):
     currentRun = len(answers)-1
     answers[currentRun].append(answer)
     page += 1
-    # print(f"Questions: {len(questionsKeys)}, Selected Answer: {answer}, Current Page: {page}, Current Run: {currentRun}")
     if page == len(questionKeys):
         page = 0
         switch_to("back", "questionnaire")
         change_question(page, questionKeys, questionText, pageIndicator)
+        now = datetime.now()
+        date = now.strftime("%Y-%m-%d %H:%M:%S")
+        answers[currentRun].append(date)
     else:
         change_question(page, questionKeys, questionText, pageIndicator)
 
@@ -104,20 +108,40 @@ def research():
 
 def courses():
     """
-    Make the courses page to show which courses are recommended based on the questionnaire.
+    Make the courses page to show which courses are recommended based on the questionnaire
     """
-    global coursesFrame, mainText
+    global coursesFrame, mainText, attemptIndex, attemptsList
     coursesFrame = Frame(master=mainFrame)
     mainText = Label(master=coursesFrame, text="You have not completed the questionnaire yet.")
+    attemptsFrame = Frame(master=coursesFrame)
+    attemptsList = Listbox(master=attemptsFrame, width=30)
+    attemptsControlFrame = Frame(master=attemptsFrame, height=10)
+    selectAttemptButton = Button(master=attemptsControlFrame, text="View Selected Attempt", command=lambda: switch_to("attempt", attemptIndex=attemptsList.curselection()))
     backButton = Button(master=coursesFrame, text="Go Back", command=lambda: switch_to("back", "courses"))
     mainText.pack()
+    attemptsFrame.pack()
+    attemptsList.pack(side=LEFT)
+    attemptsControlFrame.pack(side=LEFT)
+    selectAttemptButton.pack()
+    backButton.pack()
+    attempt() # Make the attempt page
+
+def attempt():
+    """
+    Make the attempt page as to show that attempt's answers for each question and the recommended courses
+    """
+    global attemptFrame, attemptText
+    attemptFrame = Frame(master=mainFrame)
+    attemptText = Label(master=attemptFrame, text=f"Attempt number: Filler\nDate taken: Filler")
+    backButton = Button(master=attemptFrame, text="Go Back", command=lambda: switch_to("back", "attempt"))
+    attemptText.pack()
     backButton.pack()
 
-def switch_to(string, location=False):
+def switch_to(destination, currentLocation=False, attemptIndex=0):
     """
     Used to switch between menus (from the main menu to others and back)
     """
-    match string:
+    match destination:
         case "questionnaire":
             mainMenuFrame.forget()
             questionFrame.pack()
@@ -126,14 +150,32 @@ def switch_to(string, location=False):
             researchFrame.pack()
         case "courses":
             mainMenuFrame.forget()
-            if len(answers) != 0 and len(answers[0]) == len(questions):
-                mainText.configure(text="All attempts of the questionnaire:")
+            if len(answers) != 0 and len(answers[0]) == (len(questions)+1): # If there is at least one completed attempt
+                mainText.configure(text="All attempts of the questionnaire:") # Change the text
+                attemptIndex = 1 # Update the attempts List
+                attemptsList.delete(0,END)
+                for i in answers:
+                    attemptString = f"Attempt {attemptIndex}, {i[-1]}"
+                    attemptsList.insert(attemptIndex, attemptString)
+                    attemptIndex += 1
+            else:
+                mainText.configure(text="You have not completed the questionnaire yet.")
             coursesFrame.pack()
+        case "attempt":
+            if len(attemptIndex) > 0:
+                mainText.configure(text="All attempts of the questionnaire:")
+                coursesFrame.forget()
+                attemptText.configure(text=f"Attempt number: {attemptIndex[0]}\nDate taken: {answers[attemptIndex[0]-1][-1]}")
+                attemptFrame.pack()
+            else:
+                mainText.configure(text="No attempt was selected.")
         case "back":
             frames = {"questionnaire": questionFrame,
                     "research": researchFrame,
-                    "courses": coursesFrame}
-            frames[location].forget()
+                    "courses": coursesFrame,
+                    "attempt": attemptFrame}
+            frames[currentLocation].forget() # Forget the correct frame
+            # Clean the answers array of any empty attempts
             removed = 0
             index = 0
             for i in answers:
@@ -141,7 +183,10 @@ def switch_to(string, location=False):
                     answers.pop(index)
                     removed += 1
                 index += 1
-            mainMenuFrame.pack()
+            if currentLocation == "attempt":
+                coursesFrame.pack()
+            else:
+                mainMenuFrame.pack()
 
 def recommend_courses():
     """
