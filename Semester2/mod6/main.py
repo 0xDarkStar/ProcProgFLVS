@@ -16,6 +16,7 @@ Possible additions:
 def main():
     global mainFrame # Allow mainFrame to be accessed from anywhere
     mainWindow = Tk()
+    mainWindow.title("Recommend Major")
     mainFrame = Frame(master=mainWindow, padx=20, pady=20)
     # Make all the menus
     main_menu()
@@ -114,13 +115,16 @@ def courses():
     coursesFrame = Frame(master=mainFrame)
     mainText = Label(master=coursesFrame, text="You have not completed the questionnaire yet.")
     attemptsFrame = Frame(master=coursesFrame)
-    attemptsList = Listbox(master=attemptsFrame, width=30)
+    listScroll = Scrollbar(master=attemptsFrame)
+    attemptsList = Listbox(master=attemptsFrame, width=30, yscrollcommand=listScroll.set)
+    listScroll.config(command=attemptsList.yview)
     attemptsControlFrame = Frame(master=attemptsFrame, height=10)
     selectAttemptButton = Button(master=attemptsControlFrame, text="View Selected Attempt", command=lambda: switch_to("attempt", attemptIndex=attemptsList.curselection()))
     backButton = Button(master=coursesFrame, text="Go Back", command=lambda: switch_to("back", "courses"))
     mainText.pack()
     attemptsFrame.pack()
     attemptsList.pack(side=LEFT)
+    listScroll.pack(side=LEFT, fill=Y)
     attemptsControlFrame.pack(side=LEFT)
     selectAttemptButton.pack()
     backButton.pack()
@@ -130,12 +134,41 @@ def attempt():
     """
     Make the attempt page as to show that attempt's answers for each question and the recommended courses
     """
-    global attemptFrame, attemptText
+    global attemptFrame, attemptText, attemptQADict, topMajorsParts
+    attemptQADict = {}
     attemptFrame = Frame(master=mainFrame)
     attemptText = Label(master=attemptFrame, text=f"Attempt number: Filler\nDate taken: Filler")
+    # Frame for Questions and answers as well as all the labels
+    QAFrame = Frame(master=attemptFrame)
+    for i in range(len(questions)):
+        attemptQADict[i] = [Label(master=QAFrame, text=list(questions.keys())[i], relief="sunken", width=30, height=2), Label(master=QAFrame, text="Answer", relief="sunken", width=15, height=2)]
+        attemptQADict[i][0].grid(column=0, row=i)
+        attemptQADict[i][1].grid(column=1, row=i)
+    # Frame for the recommended majors (top 3)
+    majorsFrame = Frame(master=attemptFrame, padx=5)
+    major0 = {"match":5, "canvas":5, "name":5, "desc":5}
+    major1 = {"match":5, "canvas":5, "name":5, "desc":5}
+    major2 = {"match":5, "canvas":5, "name":5, "desc":5}
+    topMajorsParts = [major0, major1, major2]
+    make_majors_parts(major0, majorsFrame)
+    make_majors_parts(major1, majorsFrame)
+    make_majors_parts(major2, majorsFrame)
+    # Back button then packing
     backButton = Button(master=attemptFrame, text="Go Back", command=lambda: switch_to("back", "attempt"))
     attemptText.pack()
-    backButton.pack()
+    QAFrame.pack(side=LEFT)
+    backButton.pack(side=BOTTOM)
+    majorsFrame.pack(side=RIGHT)
+
+def make_majors_parts(majorDict, majorFrame):
+    majorDict["match"] = Label(master=majorFrame, text="##% match")
+    majorDict["match"].pack()
+    majorDict["canvas"] = Canvas(master=majorFrame, height=5, width=100, background="black")
+    majorDict["canvas"].pack()
+    majorDict["name"] = Label(master=majorFrame, text="Recommended major", font="TkHeadingFont")
+    majorDict["name"].pack()
+    majorDict["desc"] = Label(master=majorFrame, text="Major Description")
+    majorDict["desc"].pack()
 
 def switch_to(destination, currentLocation=False, attemptIndex=0):
     """
@@ -165,7 +198,17 @@ def switch_to(destination, currentLocation=False, attemptIndex=0):
             if len(attemptIndex) > 0:
                 mainText.configure(text="All attempts of the questionnaire:")
                 coursesFrame.forget()
-                attemptText.configure(text=f"Attempt number: {attemptIndex[0]}\nDate taken: {answers[attemptIndex[0]-1][-1]}")
+                attemptText.configure(text=f"Attempt number: {attemptIndex[0]+1}\nDate taken: {answers[attemptIndex[0]][-1]}")
+                # Update all answers in the QAFrame to be accurate
+                index = 0
+                answerConvert = ["Never", "Rarely", "Occasionally", "Often", "Very Often"]
+                for i in list(questions.keys()):
+                    currentAnswer = answers[attemptIndex[0]-1][index]
+                    attemptQADict[index][0].configure(text=i)
+                    attemptQADict[index][1].configure(text=answerConvert[currentAnswer-1])
+                    index += 1
+                topMajorsParts[0]["canvas"].create_rectangle(0, 0, 50, 5, fill="green") # Percentage match bar (replace 50 with the percentage)
+                topMajorsParts[0]["match"].configure(text="50% match") # Percentage match text (replace the 50 with the percentage)
                 attemptFrame.pack()
             else:
                 mainText.configure(text="No attempt was selected.")
@@ -184,9 +227,18 @@ def switch_to(destination, currentLocation=False, attemptIndex=0):
                     removed += 1
                 index += 1
             if currentLocation == "attempt":
+                # Clear all the bars
+                topMajorsParts[0]["canvas"].delete("all")
+                topMajorsParts[1]["canvas"].delete("all")
+                topMajorsParts[2]["canvas"].delete("all")
                 coursesFrame.pack()
             else:
                 mainMenuFrame.pack()
+
+def change_shown_majors(attemptIndex):
+    """
+    Changes the labels and canvases for each major.
+    """
 
 def recommend_courses():
     """
