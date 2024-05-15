@@ -106,6 +106,8 @@ def research():
     """
     global researchFrame
     researchFrame = Frame(master=mainFrame)
+    backButton = Button(master=researchFrame, text="Go Back", command=lambda: switch_to("back", "research"))
+    backButton.pack()
 
 def courses():
     """
