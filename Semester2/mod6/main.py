@@ -1,4 +1,6 @@
 from tkinter import *
+from datetime import datetime
+import time
 
 """Remaining parts to be compelted:
 [ ] Algorithm for recommending courses
@@ -14,6 +16,7 @@ Possible additions:
 def main():
     global mainFrame # Allow mainFrame to be accessed from anywhere
     mainWindow = Tk()
+    mainWindow.title("Recommend Major")
     mainFrame = Frame(master=mainWindow, padx=20, pady=20)
     # Make all the menus
     main_menu()
@@ -39,7 +42,7 @@ def main_menu():
 
 def questionnaire():
     """
-    Make the questionnaire, but don't pack the frame.
+    Make the questionnaire, but don't pack the frame
     """
     global questionFrame, answers, page, questions
     questions = {"I work with others on projects": "Teamwork",
@@ -79,11 +82,13 @@ def answer_clicked(answer, questionKeys, questionText, pageIndicator):
     currentRun = len(answers)-1
     answers[currentRun].append(answer)
     page += 1
-    # print(f"Questions: {len(questionsKeys)}, Selected Answer: {answer}, Current Page: {page}, Current Run: {currentRun}")
     if page == len(questionKeys):
         page = 0
         switch_to("back", "questionnaire")
         change_question(page, questionKeys, questionText, pageIndicator)
+        now = datetime.now()
+        date = now.strftime("%Y-%m-%d %H:%M:%S")
+        answers[currentRun].append(date)
     else:
         change_question(page, questionKeys, questionText, pageIndicator)
 
@@ -104,20 +109,72 @@ def research():
 
 def courses():
     """
-    Make the courses page to show which courses are recommended based on the questionnaire.
+    Make the courses page to show which courses are recommended based on the questionnaire
     """
-    global coursesFrame, mainText
+    global coursesFrame, mainText, attemptIndex, attemptsList
     coursesFrame = Frame(master=mainFrame)
     mainText = Label(master=coursesFrame, text="You have not completed the questionnaire yet.")
+    attemptsFrame = Frame(master=coursesFrame)
+    listScroll = Scrollbar(master=attemptsFrame)
+    attemptsList = Listbox(master=attemptsFrame, width=30, yscrollcommand=listScroll.set)
+    listScroll.config(command=attemptsList.yview)
+    attemptsControlFrame = Frame(master=attemptsFrame, height=10)
+    selectAttemptButton = Button(master=attemptsControlFrame, text="View Selected Attempt", command=lambda: switch_to("attempt", attemptIndex=attemptsList.curselection()))
     backButton = Button(master=coursesFrame, text="Go Back", command=lambda: switch_to("back", "courses"))
     mainText.pack()
+    attemptsFrame.pack()
+    attemptsList.pack(side=LEFT)
+    listScroll.pack(side=LEFT, fill=Y)
+    attemptsControlFrame.pack(side=LEFT)
+    selectAttemptButton.pack()
     backButton.pack()
+    attempt() # Make the attempt page
 
-def switch_to(string, location=False):
+def attempt():
+    """
+    Make the attempt page as to show that attempt's answers for each question and the recommended courses
+    """
+    global attemptFrame, attemptText, attemptQADict, topMajorsParts
+    attemptQADict = {}
+    attemptFrame = Frame(master=mainFrame)
+    attemptText = Label(master=attemptFrame, text=f"Attempt number: Filler\nDate taken: Filler")
+    # Frame for Questions and answers as well as all the labels
+    QAFrame = Frame(master=attemptFrame)
+    for i in range(len(questions)):
+        attemptQADict[i] = [Label(master=QAFrame, text=list(questions.keys())[i], relief="sunken", width=30, height=2), Label(master=QAFrame, text="Answer", relief="sunken", width=15, height=2)]
+        attemptQADict[i][0].grid(column=0, row=i)
+        attemptQADict[i][1].grid(column=1, row=i)
+    # Frame for the recommended majors (top 3)
+    majorsFrame = Frame(master=attemptFrame, padx=5)
+    major0 = {"match":5, "canvas":5, "name":5, "desc":5}
+    major1 = {"match":5, "canvas":5, "name":5, "desc":5}
+    major2 = {"match":5, "canvas":5, "name":5, "desc":5}
+    topMajorsParts = [major0, major1, major2]
+    make_majors_parts(major0, majorsFrame)
+    make_majors_parts(major1, majorsFrame)
+    make_majors_parts(major2, majorsFrame)
+    # Back button then packing
+    backButton = Button(master=attemptFrame, text="Go Back", command=lambda: switch_to("back", "attempt"))
+    attemptText.pack()
+    QAFrame.pack(side=LEFT)
+    backButton.pack(side=BOTTOM)
+    majorsFrame.pack(side=RIGHT)
+
+def make_majors_parts(majorDict, majorFrame):
+    majorDict["match"] = Label(master=majorFrame, text="##% match")
+    majorDict["match"].pack()
+    majorDict["canvas"] = Canvas(master=majorFrame, height=5, width=100, background="black")
+    majorDict["canvas"].pack()
+    majorDict["name"] = Label(master=majorFrame, text="Recommended major", font="TkHeadingFont")
+    majorDict["name"].pack()
+    majorDict["desc"] = Label(master=majorFrame, text="Major Description")
+    majorDict["desc"].pack()
+
+def switch_to(destination, currentLocation=False, attemptIndex=0):
     """
     Used to switch between menus (from the main menu to others and back)
     """
-    match string:
+    match destination:
         case "questionnaire":
             mainMenuFrame.forget()
             questionFrame.pack()
@@ -126,14 +183,42 @@ def switch_to(string, location=False):
             researchFrame.pack()
         case "courses":
             mainMenuFrame.forget()
-            if len(answers) != 0 and len(answers[0]) == len(questions):
-                mainText.configure(text="All attempts of the questionnaire:")
+            if len(answers) != 0 and len(answers[0]) == (len(questions)+1): # If there is at least one completed attempt
+                mainText.configure(text="All attempts of the questionnaire:") # Change the text
+                attemptIndex = 1 # Update the attempts List
+                attemptsList.delete(0,END)
+                for i in answers:
+                    attemptString = f"Attempt {attemptIndex}, {i[-1]}"
+                    attemptsList.insert(attemptIndex, attemptString)
+                    attemptIndex += 1
+            else:
+                mainText.configure(text="You have not completed the questionnaire yet.")
             coursesFrame.pack()
+        case "attempt":
+            if len(attemptIndex) > 0:
+                mainText.configure(text="All attempts of the questionnaire:")
+                coursesFrame.forget()
+                attemptText.configure(text=f"Attempt number: {attemptIndex[0]+1}\nDate taken: {answers[attemptIndex[0]][-1]}")
+                # Update all answers in the QAFrame to be accurate
+                index = 0
+                answerConvert = ["Never", "Rarely", "Occasionally", "Often", "Very Often"]
+                for i in list(questions.keys()):
+                    currentAnswer = answers[attemptIndex[0]-1][index]
+                    attemptQADict[index][0].configure(text=i)
+                    attemptQADict[index][1].configure(text=answerConvert[currentAnswer-1])
+                    index += 1
+                topMajorsParts[0]["canvas"].create_rectangle(0, 0, 50, 5, fill="green") # Percentage match bar (replace 50 with the percentage)
+                topMajorsParts[0]["match"].configure(text="50% match") # Percentage match text (replace the 50 with the percentage)
+                attemptFrame.pack()
+            else:
+                mainText.configure(text="No attempt was selected.")
         case "back":
             frames = {"questionnaire": questionFrame,
                     "research": researchFrame,
-                    "courses": coursesFrame}
-            frames[location].forget()
+                    "courses": coursesFrame,
+                    "attempt": attemptFrame}
+            frames[currentLocation].forget() # Forget the correct frame
+            # Clean the answers array of any empty attempts
             removed = 0
             index = 0
             for i in answers:
@@ -141,7 +226,19 @@ def switch_to(string, location=False):
                     answers.pop(index)
                     removed += 1
                 index += 1
-            mainMenuFrame.pack()
+            if currentLocation == "attempt":
+                # Clear all the bars
+                topMajorsParts[0]["canvas"].delete("all")
+                topMajorsParts[1]["canvas"].delete("all")
+                topMajorsParts[2]["canvas"].delete("all")
+                coursesFrame.pack()
+            else:
+                mainMenuFrame.pack()
+
+def change_shown_majors(attemptIndex):
+    """
+    Changes the labels and canvases for each major.
+    """
 
 def recommend_courses():
     """
