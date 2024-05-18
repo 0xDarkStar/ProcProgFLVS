@@ -1,7 +1,6 @@
 from tkinter import *
 from datetime import datetime
-import time
-
+import webbrowser
 """Remaining parts to be compelted:
 [ ] Algorithm for recommending courses
 [ ] Courses page
@@ -106,8 +105,35 @@ def research():
     """
     global researchFrame
     researchFrame = Frame(master=mainFrame)
+    researchText = Label(master=researchFrame, text="Research Questions, Answers, and sources")
+    researchQAFrame = Frame(master=researchFrame)
+    researchQAs = {"0": {"Question": "What majors can be chosen?",
+                         "Answer": "A lot of majors can be chosen such as computer programming,\neducation, law, and finance.",
+                         "Source": False,
+                         "Link": "https://www.mymajors.com/college-majors/"},
+                   "1": {"Question": "What do the jobs that those majors lead to entail.",
+                         "Answer": "Almost all if not all of the jobs use computers for work,\nrequire you to be good at math, and work with others.",
+                         "Source": False,
+                         "Link": "https://www.mymajors.com\nhttps://www.careerexplorer.com"},
+                   "2": {"Question": "How do I plan to execute the project?",
+                         "Answer": "I will choose a platform that it will work on, find/think of problems that\n might occur during creation/execution, and make sure to add tons of\n comments (when necessary) to make the code easier to understand.\nIn the end, I learned that there is a lot more to the SDLC than just planning, creation, then release.",
+                         "Source": False,
+                         "Link": "https://resources.github.com/software-development/what-is-sdlc/"}}
+    makeResearchQAs(researchQAs, researchQAFrame)
     backButton = Button(master=researchFrame, text="Go Back", command=lambda: switch_to("back", "research"))
+    researchText.pack()
+    researchQAFrame.pack()
     backButton.pack()
+
+def makeResearchQAs(researchQAs, researchQAFrame):
+    for i in range(0,3):
+        for ii in range(0,2):
+            iii = list(researchQAs["0"].keys())[ii]
+            researchQAs[str(i)][iii] = Label(master=researchQAFrame, text=researchQAs[str(i)][iii])
+            researchQAs[str(i)][iii].grid(column=ii, row=i, pady=5)
+        researchQAs[str(i)]["Source"] = Button(master=researchQAFrame, text=researchQAs[str(i)]["Link"], relief=FLAT ,command=lambda: webbrowser.open(researchQAs[str(i)]["Link"]))
+        print(researchQAs[str(i)]["Link"])
+        researchQAs[str(i)]["Source"].grid(column=2, row=i, pady=5)
 
 def courses():
     """
