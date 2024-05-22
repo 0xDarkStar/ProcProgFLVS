@@ -1,12 +1,19 @@
+"""
+Made to complete the scenario where college students didn't select a major and the college needed their majors.
+To complete it, it has the students fill out a questionnaire and then gets majors recommended to them.
+It uses tkinter for the GUI with 5 different pages (frames that hold other frames or buttons or text).
+It also uses a simple algorithm based on differences (subtraction) to recommend majors.
+"""
+
 from tkinter import *
 from datetime import datetime
 import webbrowser
 """Remaining parts to be compelted:
-[ ] Algorithm for recommending courses
-[ ] Courses page
-[ ] Research page
-[ ] All the questions and answers
-[ ] All the courses and their descriptions.
+[x] Algorithm for recommending courses
+[x] Courses page
+[x] Research page
+[x] All the questions and answers
+[x] All the courses and their descriptions.
 Possible additions: 
 [ ] Save questionnaire answers between instances
 [ ] Make the UI look better
@@ -86,27 +93,7 @@ def questionnaire():
                  "How comfortable are you expressing yourself creatively and thinking in unconventional ways?": "Creativity",
                  "How often do you seek out opportunities to learn about different cultures and perspectives?": "Cultural Awareness",
                  "When interacting with people from different backgrounds, how often do you show respect and sensitivity to their cultural norms and values?": "Cultural Awareness",
-                 "How comfortable are you adapting your communication style and behavior to different cultural contexts?": "Cultural Awareness",
-                 "How often do you feel comfortable working outdoors and in potentially challenging environments?": "Fieldwork",
-                 "How often do you enjoy working with data and identifying patterns and trends?": "Data Analysis",
-                 "How comfortable are you using tools and techniques to communicate information visually?": "Visualization Skills",
-                 "How comfortable are you working in a laboratory setting and following safety protocols?": "Laboratory Skills",
-                 "How often do you adjust your approach or thinking based on new information or changing circumstances?": "Adaptability",
-                 "How often do you pay close attention to what others are saying and try to understand their point of view?": "Active Listening",
-                 "How often can you identify and understand the emotions and feelings of others?": "Empathy",
-                 "How often do you break down problems into logical steps and analyze information objectively?": "Logical Thinking",
-                 "How comfortable are you learning and using programming languages to create software applications?": "Coding Skills",
-                 "How often do you enjoy solving problems through code?": "Coding Skills",
-                 "How often do you enjoy identifying and fixing errors in software programs?": "Software Testing",
-                 "Depending on your specific field, how often do you use specialized equipment or software programs?": "Technical Skills",
-                 "How often do you effectively plan, organize, and delegate tasks to complete projects on time and within budget?": "Project Management Skills",
-                 "How often do you remain calm and focused when faced with challenges or setbacks?": "Patience",
-                 "Depending on your chosen field, how often do you use mathematical concepts and calculations to solve problems?": "Mathematics",
-                 "How often do you think strategically about business concepts like marketing, finance, and operations?": "Business Acumen",
-                 "How often do you demonstrate compassion and a willingness to help others in need?": "Patient Care",
-                 "Depending on your chosen field, how often do you apply scientific principles and theories to understand and explain the world around you?": "Scientific Knowledge",
-                 "How often do you require a high degree of manual skill and coordination to perform tasks in your chosen field?": "Dexterity",
-                 "Depending on your chosen field, how often do you use foreign languages to communicate or access information?": "Foreign Language"}
+                 "How comfortable are you adapting your communication style and behavior to different cultural contexts?": "Cultural Awareness"}
     answers = [] # Holds all the answers that the user chose
     page = 0
     questionKeys = list(questions.keys())
@@ -221,16 +208,17 @@ def attempt():
     """
     Make the attempt page as to show that attempt's answers for each question and the recommended courses
     """
-    global attemptFrame, attemptText, attemptQADict, topMajorsParts
+    global attemptFrame, attemptText, attemptQADict, topMajorsParts, QAParts
     attemptQADict = {}
     attemptFrame = Frame(master=mainFrame)
     attemptText = Label(master=attemptFrame, text=f"Attempt number: Filler\nDate taken: Filler")
     # Frame for Questions and answers as well as all the labels
     QAFrame = Frame(master=attemptFrame)
-    for i in range(len(questions)):
-        attemptQADict[i] = [Label(master=QAFrame, text=list(questions.keys())[i], relief="sunken", width=30, height=4, wraplength=230), Label(master=QAFrame, text="Answer", relief="sunken", width=15, height=4)]
-        attemptQADict[i][0].grid(column=0, row=i)
-        attemptQADict[i][1].grid(column=1, row=i)
+    QAScroll = Scrollbar(master=QAFrame, orient="vertical")
+    QList = Listbox(master=QAFrame, width=100, height=30, yscrollcommand=QAScroll.set)
+    AList = Listbox(master=QAFrame, width=15, height=30, yscrollcommand=QAScroll.set)
+    QAScroll.config(command=ScrollQALists)
+    QAParts = [QAScroll, QList, AList]
     # Frame for the recommended majors (top 3)
     majorsFrame = Frame(master=attemptFrame, padx=5)
     major0 = {"match":5, "canvas":5, "name":5, "desc":5}
@@ -244,8 +232,15 @@ def attempt():
     backButton = Button(master=attemptFrame, text="Go Back", command=lambda: switch_to("back", "attempt"))
     attemptText.pack()
     QAFrame.pack(side=LEFT)
+    QList.pack(side=LEFT)
+    AList.pack(side=LEFT)
+    QAScroll.pack(side=LEFT, fill=Y)
     backButton.pack(side=BOTTOM)
     majorsFrame.pack(side=RIGHT)
+
+def ScrollQALists(*args): # Link both lists to a single scrollbar
+    QAParts[1].yview(*args)
+    QAParts[2].yview(*args)
 
 def make_majors_parts(majorDict, majorFrame):
     majorDict["match"] = Label(master=majorFrame, text="##% match")
@@ -254,7 +249,7 @@ def make_majors_parts(majorDict, majorFrame):
     majorDict["canvas"].pack()
     majorDict["name"] = Label(master=majorFrame, text="Recommended major", font="TkHeadingFont")
     majorDict["name"].pack()
-    majorDict["desc"] = Label(master=majorFrame, text="Major Description")
+    majorDict["desc"] = Label(master=majorFrame, text="Major Description", wraplength=350)
     majorDict["desc"].pack()
 
 def switch_to(destination, currentLocation=False, attemptIndex=0):
@@ -286,17 +281,7 @@ def switch_to(destination, currentLocation=False, attemptIndex=0):
                 try:
                     mainText.configure(text="All attempts of the questionnaire:")
                     coursesFrame.forget()
-                    attemptText.configure(text=f"Attempt number: {attemptIndex[0]+1}\nDate taken: {answers[attemptIndex[0]][-1]}")
-                    # Update all answers in the QAFrame to be accurate
-                    index = 0
-                    answerConvert = ["Never", "Rarely", "Occasionally", "Often", "Very Often"]
-                    for i in list(questions.keys()): # Update the questions and the answers to match the attempt shown
-                        currentAnswer = answers[attemptIndex[0]][index] # Grab the current answer
-                        attemptQADict[index][0].configure(text=i) # Update the question
-                        attemptQADict[index][1].configure(text=answerConvert[currentAnswer-1]) # Update the answer
-                        index += 1
-                    topMajorsParts[0]["canvas"].create_rectangle(0, 0, 50, 5, fill="green") # Percentage match bar (replace 50 with the percentage)
-                    topMajorsParts[0]["match"].configure(text="50% match") # Percentage match text (replace the 50 with the percentage)
+                    update_attempt_page(attemptIndex[0])
                     attemptFrame.pack()
                 except IndexError: # They most likely didn't finish the attempt
                     attemptFrame.forget() # Close that frame
@@ -327,12 +312,33 @@ def switch_to(destination, currentLocation=False, attemptIndex=0):
             else:
                 mainMenuFrame.pack()
 
-def change_shown_majors(attemptIndex):
+def update_attempt_page(attemptIndex):
     """
+    Updates the attempt page.
+    Changes all the questions and answers to match the attempt.
     Changes the labels and canvases for each major.
     """
+    attemptText.configure(text=f"Attempt number: {attemptIndex+1}\nDate taken: {answers[attemptIndex][-1]}")
+    # Update all answers in the QAFrame to be accurate
+    index = 0
+    answerConvert = ["Never", "Rarely", "Occasionally", "Often", "Very Often"]
+    for i in list(questions.keys()): # Update the questions and the answers to match the attempt shown
+        currentAnswer = answers[attemptIndex][index] # Grab the current answer
+        QAParts[1].insert(index, i) # Update the question
+        QAParts[2].insert(index, answerConvert[currentAnswer-1])
+        index += 1
+    recommend_courses(attemptIndex)
+    index = 0
+    for major in list(topMajors.keys()):
+        percentageMatch = topMajors[major][1]
+        topMajorsParts[index]["canvas"].create_rectangle(0, 0, percentageMatch, 5, fill="green") # Percentage match bar
+        topMajorsParts[index]["match"].configure(text=f"{percentageMatch}% match") # Percentage match text
+        topMajorsParts[index]["name"].configure(text=major) # Name of major
+        topMajorsParts[index]["desc"].configure(text=majors[major]["Description"]) # Description of major
+        index += 1
 
-def recommend_courses():
+def recommend_courses(attemptIndex):
+    global topMajors, majors
     """
     The majors in the dictionary will work like this:
     majors = {"Template": ["Description", ["List", "Of", "Career", "Paths"], [Communication, Critical Thinking, Problem-solving, Teamwork, Time Management, Work Ethic, Analytical Skills, Research Skills, Attention to Detail, Interpersonal Skills, Leadership skills, Negotiation Skills, Creativity, Cultural Awareness]],
@@ -356,7 +362,7 @@ def recommend_courses():
                                      "Negotiation Skills": 1,
                                      "Creativity": 2,
                                      "Cultural Awareness": 2},
-                          "Preferred": ["Fieldwork", "Data Analysis", "Visualization Skills"]},
+                          },
               "Biology": {
                           "Description": "Focuses on living organisms, their structure, function, and interactions with the environment.\nBiology majors develop strong analytical, research, and communication skills. They delve into diverse areas like genetics, cell biology, and ecology.",
                           "Jobs": ["Biologist", "Medical Researcher", "Environmental Scientist", "Marine Bioligist", "Biotechnologist"],
@@ -374,7 +380,7 @@ def recommend_courses():
                                      "Negotiation Skills": 1,
                                      "Creativity": 3,
                                      "Cultural Awareness": 2},
-                          "Preferred": ["Laboratory Skills", "Adaptability"]},
+                          },
               "Psychology": {
                              "Description": "Explores human behavior, thoughts, and emotions.\nPsychology majors hone their critical thinking, research, and communication skills. They study mental processes, social interactions, and psychological disorders.",
                              "Jobs": ["Clinical Psychologist", "Counseling Psychologist", "School Psychologist", "Industrial/Organizational Psychologist", "Social Worker"],
@@ -392,7 +398,7 @@ def recommend_courses():
                                         "Negotiation Skills": 2,
                                         "Creativity": 3,
                                         "Cultural Awareness": 3},
-                             "Preferred": ["Empathy"]},
+                             },
               "Computer Science": {
                                    "Description": "The theoretical foundation of computing and software development.\nComputer Science majors develop strong analytical and problem-solving skills. They learn algorithms, data structures, and programming languages to design and build software applications.",
                                    "Jobs": ["Software Developer", "Web Developer", "Systems Engineer", "Database Administrator", "Data Scientist"],
@@ -410,7 +416,7 @@ def recommend_courses():
                                               "Negotiation Skills": 1,
                                               "Creativity": 3,
                                               "Cultural Awareness": 2},
-                                   "Preferred": ["Logical Thinking", "Coding Skills"]},
+                                   },
               "Computer Programming": {
                                        "Description": "The practical application of computer science principles to create software programs.\nComputer programmers excel in problem-solving, attention to detail, and critical thinking. They focus on writing code, debugging errors, and implementing software solutions.",
                                        "Jobs": ["Back-end Developer", "Front-end Developer", "Game Developer", "Full Stack Developer", "Software Engineer"],
@@ -428,7 +434,7 @@ def recommend_courses():
                                                   "Negotiation Skills": 1,
                                                   "Creativity": 3,
                                                   "Cultural Awareness": 2},
-                                       "Preferred": ["Logical Thinking", "Coding Skills", "Software Testing"]},
+                                       },
               "Engineering": {
                               "Description": "A broad discipline encompassing various branches like mechanical, electrical, and computer engineering.\nEngineers excel in critical thinking, problem-solving, and analytical skills. They design, develop, and implement solutions to complex technical challenges.",
                               "Jobs": ["Civil Engineer", "Mechanical Engineer", "Electrical Engineer", "Aerospace Engineer", "Chemical Engineer"],
@@ -446,7 +452,7 @@ def recommend_courses():
                                          "Negotiation Skills": 2,
                                          "Creativity": 4,
                                          "Cultural Awareness": 3},
-                              "Preferred": ["Technical Skills", "Project Management Skills"]},
+                              },
               "Education": {
                             "Description": "Provides a foundation for teaching various subjects and age groups. \nEducation majors develop strong communication, interpersonal, and problem-solving skills to create engaging learning environments and cater to diverse student needs.",
                             "Jobs": ["High School Teacher", "Elementary School Teacher", "Special Education Teacher", "School Counselor", "Curriculum Developer"],
@@ -464,7 +470,7 @@ def recommend_courses():
                                        "Negotiation Skills": 2,
                                        "Creativity": 4,
                                        "Cultural Awareness": 4},
-                            "Preferred": ["Patience", "Adaptability"]},
+                            },
               "Business": {
                            "Description": "A broad field encompassing various areas like marketing, finance, and management.\nBusiness majors develop strong communication, analytical, and problem-solving skills to navigate complex business challenges and make strategic decisions.",
                            "Jobs": ["Marketing Manager", "Project Manager", "Management Consultant", "Human Resources Specialist", "Operations Manager"],
@@ -482,7 +488,7 @@ def recommend_courses():
                                       "Negotiation Skills": 3,
                                       "Creativity": 3,
                                       "Cultural Awareness": 3},
-                           "Preferred": [None]},
+                           },
               "Finance": {
                           "Description": "Specializes in financial analysis, investment strategies, and risk management.\nFinance majors excel in critical thinking, analytical skills, and attention to detail. They develop expertise in financial modeling, data analysis, and financial markets.",
                           "Jobs": ["Investment Banker", "Financial Advisor", "Financial Analyst", "Commercial Loan Officer", "Risk Analyst"],
@@ -500,7 +506,7 @@ def recommend_courses():
                                      "Negotiation Skills": 4,
                                      "Creativity": 3,
                                      "Cultural Awareness": 3},
-                          "Preferred": ["Mathematics", "Business Acumen"]},
+                          },
               "Medical": {
                           "Description": "Prepares students for careers in healthcare delivery and patient care.\nMedical fields require strong communication, critical thinking, and teamwork skills. Majors gain a foundation in human biology, medical procedures, and ethical considerations in healthcare.",
                           "Jobs": ["Physician", "Registered Nurse", "Physician Assistant", "Medical Laboratory Scientist", "Physical Therapist"],
@@ -518,7 +524,7 @@ def recommend_courses():
                                      "Negotiation Skills": 2,
                                      "Creativity": 3,
                                      "Cultural Awareness": 4},
-                          "Preferred": ["Patient Care", "Scientific Knowledge", "Dexterity"]},
+                          },
               "History": {
                           "Description": "Studies past events and their impact on the present.\nHistory majors develop strong research, critical thinking, and communication skills. They learn to analyze historical data, evaluate sources, and interpret historical events from diverse perspectives.",
                           "Jobs": ["Historian", "Archivist", "Museum Curator", "Local Historian", "Historic Preservationist"],
@@ -536,7 +542,7 @@ def recommend_courses():
                                      "Negotiation Skills": 1,
                                      "Creativity": 4,
                                      "Cultural Awareness": 4},
-                          "Preferred": ["Empathy", "Foreign Language"]},
+                          },
               "Law": {
                       "Description": "Focuses on legal analysis, argumentation, and the application of law to various situations.\nLaw students hone their critical thinking, research, and communication skills to excel in legal research, writing, and advocacy.",
                       "Jobs": ["Lawyer", "Judge", "Paralegal", "Compliance Officer", "Legal Journalist/Writer"],
@@ -554,7 +560,7 @@ def recommend_courses():
                                  "Negotiation Skills": 5,
                                  "Creativity": 3,
                                  "Cultural Awareness": 3},
-                      "Preferred": [None]}
+                      }
     }
     scores = {
               "Geology": 0,
@@ -570,6 +576,36 @@ def recommend_courses():
               "History": 0,
               "Law": 0
     }
+    skills = {
+              "Communication": 0,
+              "Critical Thinking": 0,
+              "Problem-solving": 0,
+              "Teamwork": 0,
+              "Time Management": 0,
+              "Work Ethic": 0,
+              "Analytical Skills": 0,
+              "Research Skills": 0,
+              "Attention to Detail": 0,
+              "Interpersonal Skills": 0,
+              "Leadership Skills": 0,
+              "Negotiation Skills": 0,
+              "Creativity": 0,
+              "Cultural Awareness": 0
+    }
+    totalDiff = {
+                 "Geology": 42,
+                 "Biology": 39,
+                 "Psychology": 38,
+                 "Computer Science": 42,
+                 "Computer Programming": 43,
+                 "Engineering": 41,
+                 "Education": 38,
+                 "Business": 36,
+                 "Finance": 41,
+                 "Medical": 45,
+                 "History": 44,
+                 "Law": 46
+    }
     """
     The algorithm for recommending courses (as far as I've planned), will recommend based on the difference between set points and chosen answers.
 
@@ -579,7 +615,47 @@ def recommend_courses():
     It could recommend the top three courses or only the course(s) that match the most.
     """
     # Grab all the questions and order (put in lists) the answers based on skill
+    for skill in list(skills.keys()):
+        skills[skill] = [] # Turn each skill's value into an empty list (prep it)
+
+    currentIndex = 0
+    for answer in answers[attemptIndex]:
+        question = list(questions.keys())[currentIndex] # Grab the question we're currently on
+        skill = questions[question] # Grab the skill that question is about
+        skills[skill].append(answer) # Add it to the list for that skill
+        currentIndex += 1
+        if currentIndex == len(answers[attemptIndex])-1: # We have reached the date
+            break # We don't need it (it will break the rest if we include it)
+
     # Find the average of each skill (go through each list and find the average)
+    for skill in list(skills.keys()):
+        average = 0 
+        for i in skills[skill]: # Look through each answer for that skill
+            average += i # Add it to the average for that skill
+        average = average/len(skills[skill]) # Find the actual average
+        average = int(average*10)/10 # Shorten it to #.#
+        skills[skill] = average # Replace the list with the average
+
     # Save a separate score for each major in a dict
+    for major in list(majors.keys()):
+        for skill in list(skills.keys()):
+            scores[major] += int(abs(majors[major]["Skills"][skill] - skills[skill])*10)/10
+
+    # Grab the top three majors (majors with least score)
+    allMajors = []
+    topMajors = {}
+    for major in list(scores.keys()):
+        allMajors.append(major)
+    iterations = 0 # Hard limit on repeats
+    while len(list(topMajors.keys())) < 3: # Repeat until there are three in the topMajors dict
+        currTop = "Geology"
+        for major in allMajors: # Grab each major
+            if scores[major] < scores[currTop]: # The score of that major is lower than the current best major
+                currTop = major # Make that major the new best
+        topMajors[currTop] = [scores[currTop], abs(int((scores[currTop]/totalDiff[currTop])*100)-100)] # Add to topMajors dict an array with the score and percentage match
+        allMajors.remove(currTop) # Bug occurs here after 2-3 attempts: "ValueError: list.remove(x): x not in list"
+        iterations += 1
+        if iterations == 1000:
+            break
 
 main()
